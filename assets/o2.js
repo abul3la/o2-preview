@@ -26,6 +26,21 @@
     }
   }
 
+  // ---- background images below the first screen load when they come near the viewport ----
+  function unlazy(root) { var els = root.querySelectorAll('[data-lz]'); for (var i = 0; i < els.length; i++) els[i].removeAttribute('data-lz'); if (root.removeAttribute) root.removeAttribute('data-lz'); }
+  function lazyBgs() {
+    var els = d.querySelectorAll('[data-lz]'), i;
+    if (!els.length) return;
+    if (!('IntersectionObserver' in window)) { unlazy(d); return; }
+    var io = new IntersectionObserver(function (es) {
+      for (var k = 0; k < es.length; k++) if (es[k].isIntersecting) { var t = es[k].target; io.unobserve(t); if (t.hasAttribute('data-scroll-x')) unlazy(t); else t.removeAttribute('data-lz'); }
+    }, { rootMargin: '900px 0px' });
+    for (i = 0; i < els.length; i++) io.observe(els[i]);
+    // cards inside horizontal shelves are clipped by the shelf, so load a whole shelf once it is near
+    var sh = d.querySelectorAll('[data-scroll-x]');
+    for (i = 0; i < sh.length; i++) if (sh[i].querySelector('[data-lz]')) io.observe(sh[i]);
+  }
+
   // ---- show more / less ----
   function setLabel(box, open) {
     var show = (box.getAttribute('data-show') || '').trim(), less = (box.getAttribute('data-less') || '').trim();
@@ -151,7 +166,7 @@
   function init() {
     var tg = d.querySelectorAll('[data-sm] [data-sm-toggle]');
     for (var i = 0; i < tg.length; i++) tg[i].setAttribute('aria-expanded', 'false');
-    shelves(); fit(); carousels();
+    shelves(); fit(); carousels(); lazyBgs();
     var m = location.hash.match(/^#ov=([\w-]+)$/); if (m) openOverlay(m[1]);
   }
   if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', init); else init();

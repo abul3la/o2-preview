@@ -201,6 +201,7 @@ span a{display:inline}
 [data-href],[data-ov],[data-sm-toggle],[data-close],[data-back],a{cursor:pointer}
 :focus-visible{outline:2px solid #70a9c8;outline-offset:2px}
 [hidden]{display:none!important}
+.js [data-lz]{background-image:none!important}
 template{display:none}
 .root{direction:ltr;margin:0 auto;overflow:clip}
 [data-sm-toggle] img{transition:transform .25s ease}
